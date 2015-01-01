@@ -5,7 +5,8 @@ var nopt = require("nopt");
 
 var opts = {
   "lib-dir" : String,
-  "rev": String,
+  "default-index": String,
+  "rev": [String, null],
   "sha": [String, null]
 }
 var DocTree = require('./addon');
@@ -26,11 +27,13 @@ if (!stat.isDirectory()) {
   );
 }
 
-console.log("Reading docs from", libDir);
-
 module.exports = {
   name: 'ember-cli-yuidoc-converter',
   treeFor: function(type){
+    var defaultIndex = parsedOptions['default-index'];
+    var rev = parsedOptions['rev'] || 'master';
+    var sha = parsedOptions['sha'] || 'master';
+
     var yuidocOptions;
 
     try {
@@ -42,7 +45,7 @@ module.exports = {
     yuidocOptions.paths = yuidocOptions.paths || [libDir];
 
     if (type === 'public') {
-      return new DocTree(libDir, yuidocOptions);
+      return new DocTree(libDir, defaultIndex, rev, sha, yuidocOptions);
     }
   }
 };

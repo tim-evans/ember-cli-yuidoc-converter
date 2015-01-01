@@ -6,8 +6,12 @@ var eachValue = require('./lib/utils').eachValue;
 var toJSON = require('./lib/utils').toJSON;
 var DataBrowser = require('./lib/data-traversal');
 
-function Tree(dir, options) {
-  this.libDir = dir;
+function Tree(libDir, defaultIndex, rev, sha, options) {
+  this.libDir = libDir;
+  this.defaultIndex = defaultIndex;
+  this.rev = rev;
+  this.sha = sha;
+
   this.options = options;
   this.options.writeJSON = false;
 }
@@ -70,6 +74,7 @@ Tree.prototype = {
 
     var sortByNameProperty = require('./lib/utils').sortByNameProperty;
     var appJSON = {
+      defaultIndex: this.defaultIndex,
       namespaces: [],
       classes: []
     };
