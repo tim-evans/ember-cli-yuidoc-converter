@@ -1,5 +1,9 @@
 /* jshint node: true */
 
+/*
+  Overrides the default `marked` parser to pre-highlight
+  code using highlight.js and apply line numbers.
+*/
 var marked = require('marked');
 var highlight = require('highlight.js');
 

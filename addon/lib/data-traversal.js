@@ -1,5 +1,30 @@
 var copy = require('./utils').copy;
 
+/*
+
+  Takes a YUIDoc data.json object and returns an object
+  that allows you traverse the object to find out useful
+  information.
+
+  The only public method is `find`, which finds a klass by
+  its name.
+
+  var walker = new DataWalker(yuidoc);
+  var klass = walker.find('SomeClass');
+
+  This klass object can tell you
+
+    * extends: the klass objects this klass inherits from
+    * uses: an array of klass objects mixed into this klass
+    * items: an array of methods, properties, and events for the klass
+
+  Once a klass has been accessed, it is cached and subsequent lookup
+  returns the cached object so lookup efficiency increase over time
+  but the yuidoc object should be treated as immutable once passed in.
+
+  @param {Object} YUIDoc object
+  @return {Object} Data Browsing Object
+*/
 module.exports = function(yuidocJSON){
   var yuidoc = copy(yuidocJSON);
 

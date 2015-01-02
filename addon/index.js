@@ -60,7 +60,6 @@ Tree.prototype = {
     // caching lookup as it goes.
     var dataBrowser = DataBrowser(parsedDocs);
 
-
     /*
       The data object for the application itself:
       {
@@ -111,8 +110,6 @@ Tree.prototype = {
     appJSON.classes.sort(sortByNameProperty);
 
 
-
-    /************** 3. Writing Files **************/
     /*
       Write the file used for the sidebar navigation:
 
