@@ -1,4 +1,5 @@
 var fs = require('fs');
+var sh = require('execSync');
 var quickTemp = require('quick-temp');
 var Y = require('yuidocjs');
 var markdown = require('./lib/markdown');
@@ -6,9 +7,10 @@ var eachValue = require('./lib/utils').eachValue;
 var toJSON = require('./lib/utils').toJSON;
 var DataBrowser = require('./lib/data-traversal');
 
-function Tree(libDir, defaultIndex, rev, sha, options) {
+function Tree(libDir, defaultIndex, defaultModule, rev, sha, options) {
   this.libDir = libDir;
   this.defaultIndex = defaultIndex;
+  this.defaultModule = defaultModule;
   this.rev = rev;
   this.sha = sha;
 
@@ -31,17 +33,17 @@ Tree.prototype = {
     fs.mkdirSync(docsDir);
 
 
-    // I kid you not: YUIDoc expects to be in the same directory
-    // as the library.
+    // git checkout and YUIDoc execution needs to run inside the
+    // target library's repo
     var cwd = process.cwd();
     process.chdir(this.libDir);
+    sh.run('git checkout ' + this.sha);
 
     // parse the library using YUIDoc, but do not write any files
     var parsedDocs = (new Y.YUIDoc(this.options)).run();
 
     // YUIDoc pasing done, go back to our original working directory
     process.chdir(cwd);
-
 
     // Preprocess all the markdown for classes, methods, properties, and events.
     //
@@ -90,7 +92,9 @@ Tree.prototype = {
         and needs to be an array of
         [{name: 'A.Name'}, {name: 'A.Other'}]
     */
-    appJSON.modules = Object.keys(parsedDocs.modules.ember.submodules).map(function(submodule){
+
+    var modules = parsedDocs.modules[this.defaultModule].submodules
+    appJSON.modules = Object.keys(modules).map(function(submodule){
       return {name: submodule};
     }).sort(sortByNameProperty);
 
