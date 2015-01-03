@@ -2,13 +2,16 @@
 
 var fs = require('fs');
 var nopt = require("nopt");
+var url = require("url");
+var path = require("path");
 
 var opts = {
-  "lib-dir" : String,
+  "lib-dir" : path,
   "default-index": String,
   "default-module": String,
   "rev": [String, null],
-  "sha": [String, null]
+  "sha": [String, null],
+  "github-url": url
 }
 var DocTree = require('./addon');
 
@@ -35,7 +38,7 @@ if (!parsedOptions['default-index']) {
     "Run `yuidoc` in your project and check the resulting `data.json` file's `classes` section. " +
     "Supply the class you'd like to use as the default as a `--default-index` option and run " +
     "this command again: e.g. --default-index=Ember"
-  )
+  );
 }
 if (!parsedOptions['default-module']) {
   throw new Error(
@@ -43,7 +46,14 @@ if (!parsedOptions['default-module']) {
     "Run `yuidoc` in your project and check the resulting `data.json` file's `modules` section. " +
     "Supply the module you'd like to use as the default as a `--default-module` option and run " +
     "this command again: e.g. --default-module=ember"
-  )
+  );
+}
+
+if (!parsedOptions['github-url']) {
+  throw new Error(
+    "Expected a command line argumemnt --github-url. Supply one and run the command again: " +
+    "e.g. --github-url=https://github.com/emberjs/ember.js"
+  );
 }
 
 module.exports = {
@@ -57,6 +67,8 @@ module.exports = {
       var rev = parsedOptions['rev'] || 'master';
       var sha = parsedOptions['sha'] || 'master';
 
+      var githubUrl = parsedOptions['github-url'];
+
       var yuidocOptions;
 
       try {
@@ -66,7 +78,7 @@ module.exports = {
       }
 
       yuidocOptions.paths = yuidocOptions.paths || [libDir];
-      return new DocTree(libDir, defaultIndex, defaultModule, rev, sha, yuidocOptions);
+      return new DocTree(libDir, defaultIndex, defaultModule, githubUrl, rev, sha, yuidocOptions);
     }
   }
 };
