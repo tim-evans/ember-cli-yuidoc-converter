@@ -56,18 +56,28 @@ if (!parsedOptions['github-url']) {
   );
 }
 
+var defaultIndex = parsedOptions['default-index'];
+var defaultModule = parsedOptions['default-module'];
+
+var rev = parsedOptions['rev'] || 'master';
+var sha = parsedOptions['sha'] || 'master';
+
+var githubUrl = parsedOptions['github-url'];
+
 module.exports = {
   name: 'ember-cli-yuidoc-converter',
+  config: function(env){
+    return {
+      rev: rev,
+      sha: sha,
+      defaultModule: defaultModule,
+      defaultIndex: defaultIndex,
+      githubUrl: githubUrl,
+      baseURL: rev
+    }
+  },
   treeFor: function(type){
     if (type === 'public') {
-
-      var defaultIndex = parsedOptions['default-index'];
-      var defaultModule = parsedOptions['default-module'];
-
-      var rev = parsedOptions['rev'] || 'master';
-      var sha = parsedOptions['sha'] || 'master';
-
-      var githubUrl = parsedOptions['github-url'];
 
       var yuidocOptions;
 
