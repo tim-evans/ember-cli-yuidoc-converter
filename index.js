@@ -60,7 +60,7 @@ var defaultIndex = parsedOptions['default-index'];
 var defaultModule = parsedOptions['default-module'];
 
 var rev = parsedOptions['rev'] || 'master';
-var sha = parsedOptions['sha'] || 'master';
+var sha = parsedOptions['sha'] || rev;
 
 var githubUrl = parsedOptions['github-url'];
 

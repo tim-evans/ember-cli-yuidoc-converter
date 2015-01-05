@@ -23,7 +23,6 @@ var tmpName = '__docs_tmp__';
 
 Tree.prototype = {
   read: function(){
-
     // create a temporay dir for writing. The Broccoli API
     // expects us to return this dir. It represents the app's
     // public folder.
