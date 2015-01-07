@@ -11,7 +11,8 @@ var opts = {
   "default-module": String,
   "rev": [String, null],
   "sha": [String, null],
-  "github-url": url
+  "github-url": url,
+  "project-name": String
 }
 var DocTree = require('./addon');
 
@@ -56,11 +57,14 @@ if (!parsedOptions['github-url']) {
   );
 }
 
+
 var defaultIndex = parsedOptions['default-index'];
 var defaultModule = parsedOptions['default-module'];
 
 var rev = parsedOptions['rev'] || 'master';
 var sha = parsedOptions['sha'] || rev;
+
+var projectName = parsedOptions['project-name'] || '';
 
 var githubUrl = parsedOptions['github-url'];
 
@@ -73,7 +77,8 @@ module.exports = {
       defaultModule: defaultModule,
       defaultIndex: defaultIndex,
       githubUrl: githubUrl,
-      baseURL: rev
+      projectName: projectName,
+      baseURL: projectName + '/' + rev
     }
   },
   treeFor: function(type){
