@@ -7,8 +7,9 @@ var eachValue = require('./lib/utils').eachValue;
 var toJSON = require('./lib/utils').toJSON;
 var DataBrowser = require('./lib/data-traversal');
 
-function Tree(libDir, defaultIndex, defaultModule, githubUrl, rev, sha, options) {
+function Tree(libDir, executionDir, defaultIndex, defaultModule, githubUrl, rev, sha, options) {
   this.libDir = libDir;
+  this.executionDir = executionDir;
   this.defaultIndex = defaultIndex;
   this.defaultModule = defaultModule;
   this.rev = rev;
@@ -33,13 +34,14 @@ Tree.prototype = {
     fs.mkdirSync(docsDir);
 
 
-    // git checkout and YUIDoc execution needs to run inside the
-    // target library's repo
+    // git checkout needs to run inside the target library's repo
     var cwd = process.cwd();
     process.chdir(this.libDir);
     sh.run('git checkout ' + this.sha);
 
-    // parse the library using YUIDoc, but do not write any files
+    // YUIDoc execution needs to run inside the execution directory.
+    // Parse the library using YUIDoc, but do not write any files
+    process.chdir(this.executionDir);
     var parsedDocs = (new Y.YUIDoc(this.options)).run();
 
     // YUIDoc pasing done, go back to our original working directory

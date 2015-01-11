@@ -7,6 +7,7 @@ var path = require("path");
 
 var opts = {
   "lib-dir" : path,
+  "execution-dir": [path, null],
   "default-index": String,
   "default-module": String,
   "rev": [String, null],
@@ -68,6 +69,9 @@ var projectName = parsedOptions['project-name'] || '';
 
 var githubUrl = parsedOptions['github-url'];
 
+
+var executionDir = parsedOptions['execution-dir'] || libDir;
+
 module.exports = {
   name: 'ember-cli-yuidoc-converter',
   config: function(env){
@@ -87,13 +91,13 @@ module.exports = {
       var yuidocOptions;
 
       try {
-        yuidocOptions = JSON.parse(fs.readFileSync(libDir + '/yuidoc.json', {encoding: 'utf-8'})).options || {};
+        yuidocOptions = JSON.parse(fs.readFileSync(executionDir + '/yuidoc.json', {encoding: 'utf-8'})).options || {};
       } catch(e) {
         yuidocOptions = {};
       }
 
       yuidocOptions.paths = yuidocOptions.paths || [libDir];
-      return new DocTree(libDir, defaultIndex, defaultModule, githubUrl, rev, sha, yuidocOptions);
+      return new DocTree(libDir, executionDir, defaultIndex, defaultModule, githubUrl, rev, sha, yuidocOptions);
     }
   }
 };
