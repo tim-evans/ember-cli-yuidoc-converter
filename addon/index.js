@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 var sh = require('execSync');
 var quickTemp = require('quick-temp');
 var Y = require('yuidocjs');
@@ -6,6 +7,12 @@ var markdown = require('./lib/markdown');
 var eachValue = require('./lib/utils').eachValue;
 var toJSON = require('./lib/utils').toJSON;
 var DataBrowser = require('./lib/data-traversal');
+
+function projectFilePath(filePath, libDir, executionDir){
+  var resolved = path.resolve(executionDir, filePath);
+
+  return resolved.replace(libDir +'/', '');
+}
 
 function Tree(libDir, executionDir, defaultIndex, defaultModule, githubUrl, rev, sha, options) {
   this.libDir = libDir;
@@ -182,9 +189,14 @@ Tree.prototype = {
       var klassJSONData = parsedDocs['classes'][className];
       var klassJSON = {};
 
-      ['name', 'description', 'file', 'line'].forEach(function(prop){
+      ['name', 'description', 'line'].forEach(function(prop){
         this[prop] = klassJSONData[prop];
       }, klassJSON);
+
+      var fileLocation = klassJSONData.file
+      if (fileLocation) {
+        klassJSON.file = projectFilePath(fileLocation, this.libDir, this.executionDir);
+      }
 
       klassJSON.methods = [];
       klassJSON.properties = [];
@@ -215,7 +227,7 @@ Tree.prototype = {
         }
       });
 
-      fs.writeFileSync(directory + '.json', toJSON(parsedDocs['classes'][className]));
+      fs.writeFileSync(directory + '.json', toJSON(klassJSON));
 
       // create the `Ember.SomeClass/` directory for additional detailed json files
       fs.mkdirSync(directory);
@@ -237,7 +249,7 @@ Tree.prototype = {
 
         fs.writeFileSync(directory + '/' + typePlurals[type] + '.json', toJSON(items));
       });
-    });
+    }, this);
 
     /*
       Write the module files:
