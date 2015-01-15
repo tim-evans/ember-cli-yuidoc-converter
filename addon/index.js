@@ -98,7 +98,7 @@ Tree.prototype = {
         [{name: 'A.Name'}, {name: 'A.Other'}]
     */
 
-    var modules = parsedDocs.modules[this.defaultModule].submodules
+    var modules = parsedDocs.modules[this.defaultModule].submodules;
     appJSON.modules = Object.keys(modules).map(function(submodule){
       return {name: submodule};
     }).sort(sortByNameProperty);
@@ -109,9 +109,9 @@ Tree.prototype = {
     */
     eachValue(parsedDocs.classes, function(klass){
       if (klass.static) {
-        appJSON.namespaces.push({name: klass.name})
+        appJSON.namespaces.push({name: klass.name});
       } else {
-        appJSON.classes.push({name: klass.name})
+        appJSON.classes.push({name: klass.name});
       }
     });
 
@@ -179,12 +179,18 @@ Tree.prototype = {
         ```
 
       */
-      var klassJSON = parsedDocs['classes'][className];
+      var klassJSONData = parsedDocs['classes'][className];
+      var klassJSON = {};
+
+      ['name', 'description', 'file', 'line'].forEach(function(prop){
+        this[prop] = klassJSONData[prop];
+      }, klassJSON);
+
       klassJSON.methods = [];
       klassJSON.properties = [];
       klassJSON.events = [];
-      klassJSON.isPrivate = klassJSON.access === 'private';
-      klassJSON.constType = klassJSON.static ? 'Namespace' : 'Class';
+      klassJSON.isPrivate = klassJSONData.access === 'private';
+      klassJSON.constType = klassJSONData.static ? 'Namespace' : 'Class';
 
 
       // find this class by name
@@ -194,22 +200,22 @@ Tree.prototype = {
           name: item.name,
           isPrivate: item.access === 'private',
           inheritedFrom: item.inheritedFrom
-        }
+        };
 
         switch (item.itemtype) {
           case "property":
-            klassJSON.properties.push(json)
+            klassJSON.properties.push(json);
             break;
           case "method":
-            klassJSON.methods.push(json)
+            klassJSON.methods.push(json);
             break;
           case "event":
-            klassJSON.events.push(json)
+            klassJSON.events.push(json);
             break;
         }
       });
 
-      fs.writeFileSync(directory + '.json', toJSON(parsedDocs['classes'][className]))
+      fs.writeFileSync(directory + '.json', toJSON(parsedDocs['classes'][className]));
 
       // create the `Ember.SomeClass/` directory for additional detailed json files
       fs.mkdirSync(directory);
@@ -258,9 +264,9 @@ Tree.prototype = {
       var directory = docsDir + '/modules';
       var json = {
         name: module.name,
-        classes: Object.keys(module.classes).sort().map(function(name) { return {name: name}}),
-        submodules: Object.keys(module.classes).sort().map(function(name) { return {name: name}}),
-        requires: (module.requires ||[]).sort().map(function(name) { return {name: name}})
+        classes: Object.keys(module.classes).sort().map(function(name) { return {name: name}; }),
+        submodules: Object.keys(module.classes).sort().map(function(name) { return {name: name}; }),
+        requires: (module.requires ||[]).sort().map(function(name) { return {name: name}; })
       }
       fs.writeFileSync(directory + '/' + module.name + '.json', toJSON(json));
     });
