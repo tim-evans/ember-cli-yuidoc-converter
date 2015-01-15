@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-yuidoc-converter",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "directories": {
     "doc": "doc",
     "test": "tests"
