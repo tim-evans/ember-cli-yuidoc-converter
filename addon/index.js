@@ -143,7 +143,15 @@ Tree.prototype = {
     */
     fs.writeFileSync(docsDir + '/index.json', toJSON(appJSON));
 
-    // write out the files for each Class
+
+    /*
+      A data object to hold the bulk search data that we insert into
+      swiftype https://swiftype.com/documentation/indexing#bulk_operations
+    */
+    var searchJSON = {
+      documents: []
+    };
+
     /*
       Write the files for each class:
         s3-bucket/
@@ -227,7 +235,22 @@ Tree.prototype = {
         }
       });
 
+      /*
+        write this file to disk:
+        s3-bucket/
+          1.x.x/
+            Ember.SomeClass.json
+      */
       fs.writeFileSync(directory + '.json', toJSON(klassJSON));
+
+      /*
+        Add the class as an entry into the searchJSON for later insertion
+        into switftype
+      */
+      searchJSON.documents.push({
+        name: klassJSON.name,
+        description: klassJSON.description
+      });
 
       // create the `Ember.SomeClass/` directory for additional detailed json files
       fs.mkdirSync(directory);
@@ -241,10 +264,33 @@ Tree.prototype = {
                   properties.json
                   events.json
 
+          Also add entry into searchJSON:
+          {
+            documents: [
+              {
+                "name": "init",
+                "description": "<p>some html</p>\n",
+                "itemtype": "method",
+                "class": "Ember.CoreObject"
+              }
+            ]
+          }
+
       */
       ['method', 'property', 'event'].forEach(function(type){
         var items = klass.items().filter(function(item){
           return item.itemtype === type;
+        });
+
+        // add each item to the searchJSON for later bulk
+        // insertion into swiftype
+        items.forEach(function(item){
+          searchJSON.documents.push({
+            name: item.name,
+            description: item.description,
+            itemtype: item.itemtype,
+            "class": className
+          });
         });
 
         fs.writeFileSync(directory + '/' + typePlurals[type] + '.json', toJSON(items));
@@ -282,6 +328,10 @@ Tree.prototype = {
       }
       fs.writeFileSync(directory + '/' + module.name + '.json', toJSON(json));
     });
+
+
+    // Finally write the bulk search stuff
+    fs.writeFileSync(tmp + '/search.json', toJSON(searchJSON));
 
     // return the tmp dir that has all the files written into it
     return tmp;
