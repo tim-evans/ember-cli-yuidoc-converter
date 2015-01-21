@@ -248,8 +248,11 @@ Tree.prototype = {
         into switftype
       */
       searchJSON.documents.push({
-        name: klassJSON.name,
-        description: klassJSON.description
+        external_id: klassJSON.name,
+        fields: [
+          {name: "name", value: klassJSON.name, type: "string"},
+          {name: "description", value: klassJSON.description, type: "string"},
+        ]
       });
 
       // create the `Ember.SomeClass/` directory for additional detailed json files
@@ -286,10 +289,13 @@ Tree.prototype = {
         // insertion into swiftype
         items.forEach(function(item){
           searchJSON.documents.push({
-            name: item.name,
-            description: item.description,
-            itemtype: item.itemtype,
-            "class": className
+            external_id: className + "#" + item.name,
+            fields: [
+              {name: "name", value: item.name, type: "string"},
+              {name: "description", value: item.description, type: "string"},
+              {name: "itemtype", value: item.itemtype, type: "string"},
+              {name: "class", value: className, type: "string"}
+            ]
           });
         });
 
