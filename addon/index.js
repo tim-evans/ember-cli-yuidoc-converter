@@ -251,7 +251,7 @@ Tree.prototype = {
         external_id: klassJSON.name,
         fields: [
           {name: "name", value: klassJSON.name, type: "string"},
-          {name: "description", value: klassJSON.description, type: "string"},
+          {name: "description", value: klassJSON.description, type: "text"},
         ]
       });
 
@@ -292,8 +292,8 @@ Tree.prototype = {
             external_id: className + "#" + item.name,
             fields: [
               {name: "name", value: item.name, type: "string"},
-              {name: "description", value: item.description, type: "string"},
-              {name: "itemtype", value: item.itemtype, type: "string"},
+              {name: "description", value: item.description, type: "text"},
+              {name: "itemtype", value: item.itemtype, type: "enum"},
               {name: "class", value: className, type: "string"}
             ]
           });
