@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var sh = require('execSync');
+var sh = require('sync-exec');
 var quickTemp = require('quick-temp');
 var Y = require('yuidocjs');
 var markdown = require('./lib/markdown');
