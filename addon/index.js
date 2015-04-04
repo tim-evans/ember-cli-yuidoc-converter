@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var sh = require('sync-exec');
+var exec = require('sync-exec');
 var quickTemp = require('quick-temp');
 var Y = require('yuidocjs');
 var markdown = require('./lib/markdown');
@@ -44,7 +44,7 @@ Tree.prototype = {
     // git checkout needs to run inside the target library's repo
     var cwd = process.cwd();
     process.chdir(this.libDir);
-    sh.run('git checkout ' + this.sha);
+    exec('git checkout ' + this.sha);
 
     // YUIDoc execution needs to run inside the execution directory.
     // Parse the library using YUIDoc, but do not write any files
