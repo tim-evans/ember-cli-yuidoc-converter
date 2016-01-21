@@ -42,6 +42,6 @@
     "marked": "^0.3.2",
     "nopt": "^3.0.1",
     "quick-temp": "^0.1.2",
-    "yuidocjs": "^0.4.0"
+    "yuidocjs": "^0.10.0"
   }
 }
